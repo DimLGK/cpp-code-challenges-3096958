@@ -16,9 +16,17 @@
 // Returns: n!, the last calculated factorial.
 int print_factorials(int n){
     
-    // Write your code here
+    // Base case
+    if(n == 0){
+        std::cout << "1 ";
+        return 1;
+    }
 
-    return 0;
+    // Recursive case
+    int factorial_n_minus_1 = print_factorials(n - 1);
+    int factorial_n = n * factorial_n_minus_1;
+    std::cout << factorial_n << " ";
+    return factorial_n;
 }
 
 // Main function
