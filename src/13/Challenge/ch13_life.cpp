@@ -19,6 +19,30 @@
 #define N 10
 #define M 10
 
+// Returns: An integer with the live neighbor count.
+int live_neighbors(char game[][M],int i, int j){
+    int neighbors = 0;
+    i+=N;
+    j+=M;
+    if(game[(i-1)%N][(j-1)%M]=='X')
+        neighbors++;
+    if(game[(i-1)%N][j%M]=='X')
+        neighbors++;
+    if(game[(i-1)%N][(j+1)%M]=='X')
+        neighbors++;
+    if(game[i%N][(j-1)%M]=='X')
+        neighbors++;
+    if(game[i%N][(j+1)%M]=='X')
+        neighbors++;
+    if(game[(i+1)%N][(j-1)%M]=='X')
+        neighbors++;
+    if(game[(i+1)%N][j%M]=='X')
+        neighbors++;
+    if(game[(i+1)%N][(j+1)%M]=='X')
+        neighbors++;
+    return neighbors;
+}
+
 // Conway's Game of Life, main()
 // Summary: This application is a simulation of Conway's game of life.
 int main(){    
@@ -39,7 +63,9 @@ int main(){
     game[3][8]='X'; // - - - - - - X X X -
     
     int generation = 0;
+    char new_game[N][M];
     std::string go_on;
+
     do{
         std::cout << "Generation #" << generation++ << "\n";
         for (auto &str : game){
@@ -49,7 +75,25 @@ int main(){
         }
         std::cout << "\n";
 
-        // Write your code here
+        std::memcpy(new_game,game,N*M);
+        for(int i=0; i<N; i++)
+            for(int j=0; j<M; j++){
+                int n = live_neighbors(game,i,j);
+                
+                // Any live cell with fewer than two live neighbors dies, as if by underpopulation.
+                if(game[i][j]=='X' && n<2)
+                    new_game[i][j]='-';
+                // Any live cell with two or three live neighbors lives on to the next generation.
+                //if(game[i][j]=='X' && (n==2 || n==3))
+                //    new_game[i][j]='X'; 
+                // Any live cell with more than three live neighbors dies, as if by overpopulation.
+                if(game[i][j]=='X' && n>3)
+                    new_game[i][j]='-';
+                // Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+                if(game[i][j]=='-' && n==3)
+                    new_game[i][j]='X';
+            }
+        std::memcpy(game,new_game,N*M);
         
         std::cout << "Press Enter for the next generation, or type \"Exit\": " << std::flush;
         std::getline(std::cin,go_on);
