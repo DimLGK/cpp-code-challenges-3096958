@@ -21,7 +21,22 @@ int main(){
     if(n > 366)
         matches = total;
     else{
-        // Write your code here
+        matches = 0;
+        for(int t=0; t<total; t++){
+            bool birthday[366] = {false}; // Initialize all to false
+            bool match = false;
+
+            for(int i=0; i<n && !match; i++){
+                int bday = rand() % 366; // Random birthday between 0 and 365
+                if(birthday[bday]) // Birthday already taken
+                    match = true;
+                else
+                    birthday[bday] = true; // Mark this birthday as taken
+            }
+
+            if(match)
+                matches++;
+        }
     }
 
     std::cout << "The probability of a birthday match is " << (double)matches/total << "\n\n" << std::flush;  
