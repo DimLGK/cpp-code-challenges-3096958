@@ -24,9 +24,36 @@ int is_valid_JSON(std::string filename){
     std::fstream file (filename, std::ios::in);
     if(file.is_open()){
  
-        // Write your code here
+        std::stack<char> s;
+        while(getline(file, line)){
+            for(char& c : line){
+                if(c == '"'){
+                    quotes = !quotes; // Toggle quotes status
+                }
+                else if(!quotes){ // Only check braces/brackets if not inside quotes
+                    if(c == '{' || c == '['){
+                        s.push(c);
+                    }
+                    else if(c == '}'){
+                        if(s.empty() || s.top() != '{') 
+                            return 0; // Unmatched closing curly brace
+                        s.pop();
+                    }
+                    else if(c == ']'){
+                        if(s.empty() || s.top() != '[') 
+                            return 0; // Unmatched closing square bracket
+                        s.pop();
+                    }
+                }
+            }
+        }
 
         file.close();
+        
+        if(s.empty() && !quotes)
+            return 1; // Valid JSON
+        else
+            return 0; // Unmatched opening braces/brackets or unclosed quotes
     }
     else
         return -1;
